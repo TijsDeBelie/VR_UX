@@ -44,7 +44,7 @@ public class WheelchairController : MonoBehaviour
     void Start()
     {
         //cache this for performance
-        _textDisplay = GetComponentInChildren<COMTextTest>().GetComponent<TextMesh>();
+        //_textDisplay = GetComponentInChildren<COMTextTest>().GetComponent<TextMesh>();
     }
 
     // Update is called once per frame
@@ -63,13 +63,14 @@ public class WheelchairController : MonoBehaviour
         else
         {
             //electric controls, vroom vroom!
-            var speed = Input.GetAxis("Vertical") * baseSpeed * (int) this.speed;
-            backLeftWheel.motorTorque = speed;
+            float motor = 300 * Input.GetAxis("Vertical");
+            backLeftWheel.motorTorque = motor;
+            backRightWheel.motorTorque = motor;
             
             //for now just set steering heading from horizontal axes
             //TODO: CLAMP THIS
-            var angle = Input.GetAxis("Horizontal");
-            frontRightWheel.steerAngle = frontLeftWheel.steerAngle = angle * turnAngle;
+            float steering = 30 * Input.GetAxis("Horizontal");
+            frontRightWheel.steerAngle = frontLeftWheel.steerAngle = steering;
         }
     }
 
