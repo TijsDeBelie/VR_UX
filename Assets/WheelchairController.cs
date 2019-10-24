@@ -64,8 +64,7 @@ public class WheelchairController : MonoBehaviour
         {
             //electric controls, vroom vroom!
             float motor = 300 * Input.GetAxis("Vertical");
-            backLeftWheel.motorTorque = motor;
-            backRightWheel.motorTorque = motor;
+            backLeftWheel.motorTorque = backRightWheel.motorTorque = motor;
             
             //for now just set steering heading from horizontal axes
             //TODO: CLAMP THIS
