@@ -63,15 +63,18 @@ public class WheelchairController : MonoBehaviour
         else
         {
             //electric controls, vroom vroom!
-            float motor = 3000 * Input.GetAxis("Vertical") * -1;
-            if (motor == 0)
+            float vertical = Input.GetAxis("Vertical");
+            float horizontal = Input.GetAxis("Horizontal");
+//            transform.Translate(vertical * Time.deltaTime * baseSpeed * (int)speed * Vector3.forward);
+//            transform.Rotate(Time.deltaTime * turnAngle * horizontal * Vector3.up);
+            if (Math.Abs(vertical) < 0.1)
             {
                 backLeftWheel.brakeTorque = backRightWheel.brakeTorque =
                     frontLeftWheel.brakeTorque = frontRightWheel.brakeTorque = 3000;
             }
             else
             {
-                backLeftWheel.motorTorque = backRightWheel.motorTorque = frontLeftWheel.motorTorque = frontRightWheel.motorTorque= motor;
+                backLeftWheel.motorTorque = backRightWheel.motorTorque = frontLeftWheel.motorTorque = frontRightWheel.motorTorque= vertical * baseSpeed * (int)speed ;
                 backLeftWheel.brakeTorque = backRightWheel.brakeTorque =
                     frontLeftWheel.brakeTorque = frontRightWheel.brakeTorque = 0;
             }
@@ -80,7 +83,7 @@ public class WheelchairController : MonoBehaviour
             
             //for now just set steering heading from horizontal axes
             //TODO: CLAMP THIS
-            float steering = 30 * Input.GetAxis("Horizontal");
+            float steering = turnAngle * Input.GetAxis("Horizontal");
             frontRightWheel.steerAngle = frontLeftWheel.steerAngle = steering;
         }
     }
