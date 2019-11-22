@@ -1,5 +1,7 @@
-﻿using UnityEngine;
+﻿using Boo.Lang;
+using UnityEngine;
 using UnityEngine.UI;
+using Valve.VR;
 using Valve.VR.InteractionSystem;
  
  /*
@@ -7,61 +9,56 @@ using Valve.VR.InteractionSystem;
   */
  public class OpenDoor : MonoBehaviour
  {
-     private Vector3 _force;
-
-     private void Start()
-     {
-         _rigidbody = GetComponentInParent<Rigidbody>();
-     }
-
-     private Vector3 _cross;
-     private bool _holdingHandle;
-     private float _angle;
-     private Rigidbody _rigidbody;
-     private const float ForceMultiplier = 150f;
+  public SteamVR_Input_Sources Hand;
+  public SteamVR_Action_Boolean ToggleGripButton;
+  private Rigidbody _rigidbody;
+ 
+  
+  public List<GameObject> NearObjects =new List<GameObject>();
+  
+  
+  private void Update()
+  {
+   
+   if (ToggleGripButton.GetStateUp(Hand))// Check if we want to grab the object
+   {
+     
     
-     private void HandHoverUpdate(Hand hand)
-     {
-         var startingGrabType = hand.GetGrabStarting();
-         
-         if (hand.IsGrabbingWithType(startingGrabType))
-         {
-             _holdingHandle = true;
- 
-             // Direction vector from the door's pivot point to the hand's current position
-             var transform1 = hand.transform;
-             var position = transform1.position;
-             var transform2 = transform;
-             Vector3 doorPivotToHand = position - transform2.parent.position;
- 
-             // Ignore the y axis of the direction vector
-             doorPivotToHand.y = 0;  
- 
-             // Direction vector from door handle to hand's current position
-             _force = position - transform2.position;
- 
-             // Cross product between force and direction. 
-             _cross = Vector3.Cross(doorPivotToHand, _force);
-             _angle = Vector3.Angle(doorPivotToHand, _force);
-         }
-         else if (hand.IsGrabEnding(_rigidbody.gameObject))
-         {
-             _holdingHandle = false;
-         }
-     }
+     print("Grab action");
+   }
+   
+   if (ToggleGripButton.GetStateDown(Hand))// Check if we want to drop the object
+   {
+     print("Drop action");
+   }
+  
+   
+   
+  }
 
-     void Update()
-     {
-         if (_holdingHandle)
-         {
-             // Apply cross product and calculated angle to
-             _rigidbody.angularVelocity = _cross * _angle * ForceMultiplier;
-         }
-     }
+  private void OnTriggerEnter (Collider other)
+  {
+   //Add grabbable objects in range of our hand to a list
+   if (other.CompareTag("Grabbable"))
+   {
+    NearObjects.Add(other.gameObject);
+   }
+   Debug.Log(NearObjects);
+  }
+  
+  private GameObject ClosestGrabbable()
+  {
+   //find the object in our list of grabbable that is closest and return it.
+   GameObject closestGameObj = null;
+   var distance = float.MaxValue;
+   if (NearObjects == null) return null;
+   foreach (var gameObj in NearObjects)
+   {
+    if (!((gameObj.transform.position - transform.position).sqrMagnitude < distance)) continue;
+    closestGameObj = gameObj;
+    distance = (gameObj.transform.position - transform.position).sqrMagnitude;
+   }
+   return closestGameObj;
+  }
  
-     private void OnHandHoverEnd()
-     {
-         // Set angular velocity to zero if the hand stops hovering
-         GetComponentInParent<Rigidbody>().angularVelocity = Vector3.zero;
-     }
  }
