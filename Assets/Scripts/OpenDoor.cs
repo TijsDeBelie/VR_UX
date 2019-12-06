@@ -13,7 +13,7 @@ public class OpenDoor : MonoBehaviour
     //public Rigidbody Door;
     private GameObject[] NearObjects;
 
-    //not sure if controller  will be updated by unity, needs testing
+    
     public GameObject Controller;
 
     private void Start()
@@ -22,12 +22,12 @@ public class OpenDoor : MonoBehaviour
 
         ToggleGripButton.AddOnStateDownListener((newState, source) => {
             print(NearObjects.Length);
-            GameObject local = ClosestGrabbable();
-            print(local);
+            var local = ClosestGrabbable();
             if (local == null) return;
+            print(Controller.transform);
             var dist = Vector3.Distance(local.transform.position, Controller.transform.position);
-            print(dist);
-            if (dist < 0.9)
+            print($"{local.name}: {dist}");
+            if (dist <= 1)
             {
                 
                 local.gameObject.GetComponent<MeshRenderer>().enabled = !local.gameObject.GetComponent<MeshRenderer>().enabled;
@@ -98,14 +98,22 @@ public class OpenDoor : MonoBehaviour
     {
         //find the object in our list of grabbable that is closest and return it.
         GameObject closestGameObj = null;
-        var distance = float.MaxValue;
+        var distance = 5.0;
+        
+        //LOOP OVER NEAROBJECTS (ALL DOORS)
+        //CHECK DISTANCE FOR EACH OF THEM, AND KEEP ONLY SMALLEST ONE
+        //EACH LOOP DISTANCE GET'S ADJUSTED TO A SMALLER VALUE
         foreach (var gameObj in NearObjects)
-        {
-            print((gameObj.transform.position - Controller.transform.position).sqrMagnitude);
-            if (!((gameObj.transform.position - Controller.transform.position).sqrMagnitude < distance)) continue;
+        {   print(gameObj.name);
+            print((gameObj.transform.position - Controller.transform.position).magnitude);
+            if (!((gameObj.transform.position - Controller.transform.position).magnitude <= distance)) continue;
+            //CLOSESTGAMEOBJECT
             closestGameObj = gameObj;
-            distance = (gameObj.transform.position - transform.position).sqrMagnitude;
+            distance = (gameObj.transform.position - transform.position).magnitude;
+            print(distance);
         }
+        print("___________________________________________________________________________");
+        print(message: "CLOSEST GAME OBJECT NAME:" + closestGameObj?.name);
         return closestGameObj;
     }
 
