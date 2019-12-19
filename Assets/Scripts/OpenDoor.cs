@@ -18,13 +18,14 @@ public class OpenDoor : MonoBehaviour
 
     private void Start()
     {
+
         NearObjects = GameObject.FindGameObjectsWithTag("Door");
 
         ToggleGripButton.AddOnStateDownListener((newState, source) => {
             print(NearObjects.Length);
             var local = ClosestGrabbable();
             if (local == null) return;
-            print(Controller.transform);
+            print(Controller.transform.position);
             var dist = Vector3.Distance(local.transform.position, Controller.transform.position);
             print($"{local.name}: {dist}");
             if (dist <= 1)
@@ -104,8 +105,7 @@ public class OpenDoor : MonoBehaviour
         //CHECK DISTANCE FOR EACH OF THEM, AND KEEP ONLY SMALLEST ONE
         //EACH LOOP DISTANCE GET'S ADJUSTED TO A SMALLER VALUE
         foreach (var gameObj in NearObjects)
-        {   print(gameObj.name);
-            print((gameObj.transform.position - Controller.transform.position).magnitude);
+        {  
             if (!((gameObj.transform.position - Controller.transform.position).magnitude <= distance)) continue;
             //CLOSESTGAMEOBJECT
             closestGameObj = gameObj;

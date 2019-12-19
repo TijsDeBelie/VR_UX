@@ -38,6 +38,8 @@ public class WheelchairController : MonoBehaviour
     public Mode controlMode;
     public SpeedSetting speed;
 
+    private Rigidbody body;
+
     private TextMesh _textDisplay;
 
     // Start is called before the first frame update
@@ -45,6 +47,7 @@ public class WheelchairController : MonoBehaviour
     {
         //cache this for performance
         //_textDisplay = GetComponentInChildren<COMTextTest>().GetComponent<TextMesh>();
+        body = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
@@ -63,28 +66,41 @@ public class WheelchairController : MonoBehaviour
         else
         {
             //electric controls, vroom vroom!
-            float vertical = Input.GetAxis("Vertical");
-            float horizontal = Input.GetAxis("Horizontal");
-//            transform.Translate(vertical * Time.deltaTime * baseSpeed * (int)speed * Vector3.forward);
-//            transform.Rotate(Time.deltaTime * turnAngle * horizontal * Vector3.up);
-            if (Math.Abs(vertical) < 0.1)
-            {
-                backLeftWheel.brakeTorque = backRightWheel.brakeTorque =
-                    frontLeftWheel.brakeTorque = frontRightWheel.brakeTorque = 3000;
-            }
-            else
-            {
-                backLeftWheel.motorTorque = backRightWheel.motorTorque = frontLeftWheel.motorTorque = frontRightWheel.motorTorque= vertical * baseSpeed * (int)speed ;
-                backLeftWheel.brakeTorque = backRightWheel.brakeTorque =
-                    frontLeftWheel.brakeTorque = frontRightWheel.brakeTorque = 0;
-            }
+            //float vertical = Input.GetAxis("Vertical");
+            //float horizontal = Input.GetAxis("Horizontal");
+            //            transform.Translate(vertical * Time.deltaTime * baseSpeed * (int)speed * Vector3.forward);
+            //            transform.Rotate(Time.deltaTime * turnAngle * horizontal * Vector3.up);
+            //if (Math.Abs(vertical) < 0.1)
+            //{
+            //    backLeftWheel.brakeTorque = backRightWheel.brakeTorque =
+            //        frontLeftWheel.brakeTorque = frontRightWheel.brakeTorque = 3000;
+            //}
+            //else
+            //{
+            //    backLeftWheel.motorTorque = backRightWheel.motorTorque = frontLeftWheel.motorTorque = frontRightWheel.motorTorque= vertical * baseSpeed * (int)speed ;
+            //    backLeftWheel.brakeTorque = backRightWheel.brakeTorque =
+            //        frontLeftWheel.brakeTorque = frontRightWheel.brakeTorque = 0;
+            //}
 
+
+
+            ////for now just set steering heading from horizontal axes
+            ////TODO: CLAMP THIS
+            //float steering = turnAngle * Input.GetAxis("Horizontal");
+            //frontRightWheel.steerAngle = frontLeftWheel.steerAngle = steering;
+
+            float h = Input.GetAxisRaw("Horizontal");
+            float v = Input.GetAxisRaw("Vertical");
+
+            // float dr is declared outside
+            /** There is no diagonal rotation, atm. **/
+            float dr = 30f;
+            var velocity = new Vector3(0, (dr * h), 0);
+            // not normalized, yet.
             
-            
-            //for now just set steering heading from horizontal axes
-            //TODO: CLAMP THIS
-            float steering = turnAngle * Input.GetAxis("Horizontal");
-            frontRightWheel.steerAngle = frontLeftWheel.steerAngle = steering;
+            body.MovePosition(transform.position + (new Vector3(v, 0, v) + body.rotation.eulerAngles * Time.deltaTime));
+            var rotation = Quaternion.Euler(velocity * Time.deltaTime);
+            body.MoveRotation(body.rotation * rotation);
         }
     }
 
