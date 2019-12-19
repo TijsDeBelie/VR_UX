@@ -1,4 +1,4 @@
-# Project Title
+# Wheelchair simulator
 
 Een VR rolstoel simulator. 
 
