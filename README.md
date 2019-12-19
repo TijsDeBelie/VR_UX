@@ -10,7 +10,7 @@ Hierin bevind zich de basis van ons project, maar we hebben hier niet op verder 
 
 ### HakanTest
 
-Dit is de branch waar de uitgewerkte versie van ons project zich bevindt. De reden waarom dat dit een aparte branch is, is omdat we een aantal scripts wouden testen zonder in merge conflict te komen. 
+Dit is de branch waar de uitgewerkte versie van ons project zich bevindt. De reden waarom dat dit een aparte branch is, is omdat we een aantal scripts wouden testen zonder in merge conflict te komen. Dit is ook de default branch van onze github repository. 
 
 ## Scène's 
 
